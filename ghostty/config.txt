@@ -1,9 +1,4 @@
 
-# ============================================================
-# GHOSTTY CONFIG
-# Dark minimal — tuned for serious coding sessions
-# ============================================================
-
 # ------------------------------------------------------------
 # FONT
 # Berkely Mono or Zed Mono are great options if installed.
@@ -28,7 +23,6 @@ font-thicken = true
 # to what nvim expects, no color space mismatch.
 # ------------------------------------------------------------
 background = #1d2021
-# background-image = "~/Pictures/X/IMG_5117.jpeg"
 background-image-position = "center"
 background-image-fit = "stretch"
 background-image-opacity = 0.02
