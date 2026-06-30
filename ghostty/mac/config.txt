@@ -1,0 +1,146 @@
+
+# ============================================================
+# GHOSTTY CONFIG
+# Dark minimal — tuned for serious coding sessions
+# ============================================================
+
+# ------------------------------------------------------------
+# FONT
+# Berkely Mono or Zed Mono are great options if installed.
+# Falling back to JetBrains Mono which is widely available.
+# Install your preferred font then swap the name here.
+# ------------------------------------------------------------
+font-family = "Zed Mono"
+font-size = 11.5
+
+# Disable ligatures — when editing Rust/Go you want to see
+# the actual characters, not a ligature glyph hiding them.
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+
+# Slightly thicker strokes — helps on high DPI displays
+font-thicken = true
+
+
+
+# Selection colors
+selection-background = #504945
+selection-foreground = #ebdbb2
+
+# Cursor
+cursor-color = #ebdbb2
+cursor-style = bar
+cursor-style-blink = false
+
+# ------------------------------------------------------------
+# OPACITY + BLUR
+# background-opacity controls transparency of the window.
+# background-blur activates macOS frosted glass effect.
+# background-opacity-cells = true makes Neovim respect the
+# opacity too — without it nvim repaints its own background
+# fully opaque and you lose the transparency effect.
+# ------------------------------------------------------------
+background-opacity = 0.90
+background-blur = 10
+background-opacity-cells = true
+
+# ------------------------------------------------------------
+# WINDOW
+# ------------------------------------------------------------
+window-padding-x = 2
+window-padding-y = 2
+window-padding-balance = true
+window-padding-color = extend
+
+# fullscreen = true
+macos-non-native-fullscreen = true
+
+# Transparent titlebar that bleeds into your terminal bg
+macos-titlebar-style = transparent
+
+# Hide the proxy icon in the titlebar (cleaner look)
+macos-titlebar-proxy-icon = hidden
+
+# ------------------------------------------------------------
+# CURSOR
+# ------------------------------------------------------------
+cursor-color = #fabd2f
+cursor-text = #1d2021
+cursor-opacity = 1.0
+
+# ------------------------------------------------------------
+# MOUSE
+# ------------------------------------------------------------
+mouse-hide-while-typing = true
+mouse-scroll-multiplier = 3
+
+# Faster key repeat for navigation (set in macOS too)
+# System Settings → Keyboard → Key repeat fastest, delay shortest
+
+# Window subtitle shows your current directory in the tab
+window-subtitle = working-directory
+
+# Show tab bar only when you have multiple tabs (clean)
+window-show-tab-bar = auto
+
+# ------------------------------------------------------------
+# SHELL INTEGRATION
+# Enables working directory inheritance, prompt marking,
+# and smart close confirmation (won't ask if shell is idle).
+# ------------------------------------------------------------
+shell-integration = detect
+shell-integration-features = cursor,title,sudo
+
+# ------------------------------------------------------------
+# KEYBINDS
+# ------------------------------------------------------------
+
+# Reload config without restarting
+keybind = cmd+shift+r=reload_config
+
+# New tab / window
+keybind = cmd+t=new_tab
+keybind = cmd+n=new_window
+
+# Split panes
+keybind = cmd+d=new_split:right
+keybind = cmd+shift+d=new_split:down
+
+# Navigate splits with cmd+hjkl (vim style)
+keybind = cmd+h=goto_split:left
+keybind = cmd+j=goto_split:bottom
+keybind = cmd+k=goto_split:top
+keybind = cmd+l=goto_split:right
+
+# Font size
+keybind = cmd+equal=increase_font_size:1
+keybind = cmd+minus=decrease_font_size:1
+keybind = cmd+0=reset_font_size
+
+# ------------------------------------------------------------
+# MISC
+# ------------------------------------------------------------
+
+# Warn before closing a surface with a running process
+confirm-close-surface = true
+
+# Don't ask to close if shell is idle at prompt
+# (shell-integration handles this automatically)
+
+# Clipboard
+clipboard-read = allow
+clipboard-write = allow
+clipboard-trim-trailing-spaces = true
+clipboard-paste-protection = true
+copy-on-select = true
+
+# URL clicking with cmd+click
+link-url = true
+
+# Scrollback — 10MB per surface
+scrollback-limit = 10000000
+
+# Keep window open briefly after last window closes
+# so you can see exit output
+quit-after-last-window-closed = false

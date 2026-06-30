@@ -1,0 +1,333 @@
+-- ============================================================
+-- BASIC SETTINGS
+-- ============================================================
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+local opt = vim.opt
+
+opt.number = true
+opt.relativenumber = false
+opt.cursorline = true
+opt.wrap = false
+opt.ignorecase = true
+opt.smartcase = true
+opt.incsearch = true
+opt.hlsearch = true
+opt.mouse = "a"
+opt.clipboard = "unnamedplus"
+opt.splitbelow = true
+opt.splitright = true
+opt.signcolumn = "yes"
+opt.updatetime = 250
+opt.timeoutlen = 400
+opt.tabstop = 4
+opt.shiftwidth = 4
+opt.expandtab = true
+opt.smartindent = true
+opt.swapfile = false
+opt.backup = false
+opt.undofile = true
+opt.termguicolors = true
+opt.completeopt = { "menu", "menuone", "noselect" }
+opt.background = "dark"
+
+-- ============================================================
+-- BOOTSTRAP LAZY
+-- ============================================================
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git","clone","--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- ============================================================
+-- PLUGINS
+-- ============================================================
+require("lazy").setup({
+
+-- ------------------------------------------------------------
+-- THEME (GitHub Dark Dimmed)
+-- ------------------------------------------------------------
+{
+  "projekt0n/github-nvim-theme",
+  name = "github-theme",
+  priority = 1000,
+  config = function()
+    require("github-theme").setup({
+      options = {
+        transparent = false,
+        dim_inactive = true,
+      },
+    })
+    vim.cmd.colorscheme("github_dark_dimmed")
+  end,
+},
+
+{ "nvim-tree/nvim-web-devicons" },
+
+-- ------------------------------------------------------------
+-- FILE TREE
+-- ------------------------------------------------------------
+{
+  "nvim-tree/nvim-tree.lua",
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+  config = function()
+    -- disable netrw so nvim-tree takes over directory handling
+    vim.g.loaded_netrw = 1
+    vim.g.loaded_netrwPlugin = 1
+
+    require("nvim-tree").setup({
+      hijack_directories = {
+        enable = true,
+        auto_open = true,
+      },
+      view = {
+        width = 35,
+        side = "left",
+      },
+      renderer = {
+        group_empty = true,
+        icons = {
+          show = {
+            file = true,
+            folder = true,
+            folder_arrow = true,
+            git = true,
+          },
+        },
+      },
+      filters = {
+        dotfiles = false, -- show hidden files
+      },
+      git = {
+        enable = true,
+        ignore = false,
+      },
+      actions = {
+        open_file = {
+          quit_on_open = false,
+        },
+      },
+    })
+
+    -- Auto-open when launched with a directory
+    vim.api.nvim_create_autocmd("VimEnter", {
+      callback = function(data)
+        local is_dir = vim.fn.isdirectory(data.file) == 1
+        if is_dir then
+          vim.cmd.cd(data.file)
+          require("nvim-tree.api").tree.open()
+        end
+      end,
+    })
+  end,
+},
+
+-- ------------------------------------------------------------
+-- OIL (secondary — great for renaming/moving files)
+-- ------------------------------------------------------------
+{
+  "stevearc/oil.nvim",
+  config = function()
+    require("oil").setup({
+      view_options = { show_hidden = true },
+      float = { border = "rounded" },
+    })
+  end,
+},
+
+-- ------------------------------------------------------------
+-- FZF
+-- ------------------------------------------------------------
+{
+  "junegunn/fzf",
+  build = function()
+    vim.fn["fzf#install"]()
+  end,
+},
+{
+  "junegunn/fzf.vim",
+  config = function()
+    if vim.fn.executable("rg") == 1 then
+      vim.env.FZF_DEFAULT_COMMAND =
+        "rg --files --hidden --follow --glob '!.git/*'"
+    end
+  end,
+},
+
+-- ------------------------------------------------------------
+-- GIT
+-- ------------------------------------------------------------
+{ "tpope/vim-fugitive" },
+
+{
+  "lewis6991/gitsigns.nvim",
+  event = { "BufReadPre", "BufNewFile" },
+  config = function()
+    require("gitsigns").setup({
+      signs = {
+        add = { text = "▎" },
+        change = { text = "▎" },
+        delete = { text = "" },
+      },
+      current_line_blame = true,
+    })
+  end,
+},
+
+-- ------------------------------------------------------------
+-- STATUSLINE
+-- ------------------------------------------------------------
+{
+  "nvim-lualine/lualine.nvim",
+  config = function()
+    require("lualine").setup({
+      options = {
+        theme = "auto",
+        section_separators = "",
+        component_separators = "",
+      },
+    })
+  end,
+},
+
+-- ------------------------------------------------------------
+-- AUTOPAIRS
+-- ------------------------------------------------------------
+{
+  "windwp/nvim-autopairs",
+  event = "InsertEnter",
+  config = true,
+},
+
+-- ------------------------------------------------------------
+-- LSP + MASON
+-- ------------------------------------------------------------
+{
+  "williamboman/mason.nvim",
+  config = true,
+},
+{
+  "williamboman/mason-lspconfig.nvim",
+  dependencies = "mason.nvim",
+  config = function()
+    require("mason-lspconfig").setup({
+      ensure_installed = { "gopls", "rust_analyzer" },
+    })
+  end,
+},
+{
+  "neovim/nvim-lspconfig",
+},
+
+-- ------------------------------------------------------------
+-- COMPLETION
+-- ------------------------------------------------------------
+{
+  "hrsh7th/nvim-cmp",
+  dependencies = {
+    "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
+    "hrsh7th/cmp-path",
+    "L3MON4D3/LuaSnip",
+  },
+  config = function()
+    local cmp = require("cmp")
+
+    cmp.setup({
+      snippet = {
+        expand = function(args)
+          require("luasnip").lsp_expand(args.body)
+        end,
+      },
+      mapping = cmp.mapping.preset.insert({
+        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        ["<Tab>"] = cmp.mapping.select_next_item(),
+        ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+        ["<C-Space>"] = cmp.mapping.complete(),
+      }),
+      sources = {
+        { name = "nvim_lsp" },
+        { name = "buffer" },
+        { name = "path" },
+      },
+    })
+  end,
+},
+
+}, {
+  ui = { border = "rounded" },
+})
+
+-- ============================================================
+-- LSP SETUP
+-- ============================================================
+local lspconfig = require("lspconfig")
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local bufnr = args.buf
+    local map = function(k, f)
+      vim.keymap.set("n", k, f, { buffer = bufnr })
+    end
+
+    map("gd", vim.lsp.buf.definition)
+    map("gr", vim.lsp.buf.references)
+    map("K", vim.lsp.buf.hover)
+    map("<leader>rn", vim.lsp.buf.rename)
+    map("<leader>ca", vim.lsp.buf.code_action)
+  end,
+})
+
+lspconfig.gopls.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+lspconfig.rust_analyzer.setup({
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
+
+-- ============================================================
+-- DIAGNOSTICS
+-- ============================================================
+vim.diagnostic.config({
+  virtual_text = true,
+  underline = true,
+  severity_sort = true,
+  float = { border = "rounded" },
+})
+
+-- ============================================================
+-- KEYMAPS
+-- ============================================================
+local map = vim.keymap.set
+
+-- File search
+map("n", "<leader>ff", ":Files<CR>")
+map("n", "<leader>fg", ":Rg<CR>")
+map("n", "<C-p>", ":Files<CR>")
+
+-- File tree
+map("n", "<leader>e", ":NvimTreeToggle<CR>")
+map("n", "<leader>E", ":NvimTreeFindFile<CR>") -- reveal current file in tree
+
+-- Oil (for renaming/moving)
+map("n", "-", ":Oil<CR>")
+map("n", "<leader>-", ":Oil --float<CR>")
+
+-- Clear highlight
+map("n", "<Esc>", ":nohlsearch<CR>")
+
+-- Window navigation
+map("n", "<C-h>", "<C-w>h")
+map("n", "<C-j>", "<C-w>j")
+map("n", "<C-k>", "<C-w>k")
+map("n", "<C-l>", "<C-w>l")
