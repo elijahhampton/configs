@@ -8,15 +8,6 @@ autocmd("TextYankPost", {
   end,
 })
 
-autocmd("BufWritePre", {
-  group = augroup("trim_whitespace", { clear = true }),
-  callback = function()
-    local save = vim.fn.winsaveview()
-    vim.cmd([[silent! %s/\s\+$//e]])
-    vim.fn.winrestview(save)
-  end,
-})
-
 autocmd({ "BufWinEnter", "FileType" }, {
   group = augroup("close_with_q", { clear = true }),
   pattern = { "qf", "help", "man", "lspinfo", "checkhealth", "fugitive", "fugitiveblame" },
