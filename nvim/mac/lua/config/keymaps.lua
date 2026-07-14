@@ -11,6 +11,14 @@ map("n", "<S-h>", "<cmd>bprevious<CR>", { desc = "Prev buffer" })
 map("n", "<S-l>", "<cmd>bnext<CR>", { desc = "Next buffer" })
 map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })
 
+-- <Cmd> (not <cmd>...<CR>) runs without leaving the current mode, so these
+-- also work mid-terminal-mode without kicking you out of insert. Avoiding
+-- <C-Tab>/<C-S-Tab> here: Ghostty claims those as built-in tab-switch
+-- defaults before nvim ever sees the keystroke.
+map({ "n", "i", "t" }, "<C-.>", "<Cmd>tabnext<CR>", { desc = "Next tab" })
+map({ "n", "i", "t" }, "<C-,>", "<Cmd>tabprevious<CR>", { desc = "Prev tab" })
+map("n", "<leader><Tab>", "<cmd>tabnew<CR>", { desc = "New tab" })
+
 map("v", "<", "<gv")
 map("v", ">", ">gv")
 map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
@@ -28,3 +36,5 @@ map("n", "<leader>E", "<cmd>NvimTreeFindFile<CR>", { desc = "Reveal in tree" })
 
 map("n", "<leader>?", function() require("util.cheatsheet").toggle() end, { desc = "Toggle cheatsheet" })
 map("n", "<F1>", function() require("util.cheatsheet").toggle() end, { desc = "Toggle cheatsheet" })
+
+map("n", "<leader>ut", function() require("config.theme").toggle() end, { desc = "Toggle theme (flume/kanagawa-dragon)" })

@@ -10,6 +10,18 @@ return {
   },
 
   {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory", "DiffviewToggleFiles", "DiffviewFocusFiles" },
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    keys = {
+      { "<leader>gv", "<cmd>DiffviewOpen<CR>", desc = "Diffview: open" },
+      { "<leader>gV", "<cmd>DiffviewClose<CR>", desc = "Diffview: close" },
+      { "<leader>gH", "<cmd>DiffviewFileHistory<CR>", desc = "Diffview: file history" },
+    },
+    opts = {},
+  },
+
+  {
     "lewis6991/gitsigns.nvim",
     event = { "BufReadPre", "BufNewFile" },
     opts = {
