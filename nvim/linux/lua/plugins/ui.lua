@@ -1,35 +1,81 @@
 return {
   {
+    "rebelot/kanagawa.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+      theme = "dragon",
+      background = { dark = "dragon", light = "lotus" },
+    },
+    config = function(_, opts)
+      require("kanagawa").setup(opts)
+    end,
+  },
+
+  {
+    "mitander/flume.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+    config = function(_, opts)
+      require("flume").setup(opts)
+    end,
+  },
+
+  {
     "projekt0n/github-nvim-theme",
     name = "github-theme",
     lazy = false,
     priority = 1000,
-    config = function()
-      require("github-theme").setup({
-        options = { transparent = false, dim_inactive = true },
-      })
-      vim.cmd.colorscheme("github_dark_dimmed")
+    opts = {
+      options = { transparent = false, dim_inactive = true },
+    },
+    config = function(_, opts)
+      require("github-theme").setup(opts)
     end,
   },
 
   { "nvim-tree/nvim-web-devicons", lazy = true },
 
   {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    opts = {
-      options = {
-        theme = "auto",
-        globalstatus = true,
-        section_separators = "",
-        component_separators = "",
-      },
-      sections = {
-        lualine_c = { { "filename", path = 1 } },
-        lualine_x = { "diagnostics", "encoding", "filetype" },
-      },
-    },
+    "itchyny/lightline.vim",
+    lazy = false, -- UI element, load at start
+    config = function()
+      -- no need to also show mode in cmd line when we have the bar
+      vim.o.showmode = false
+      vim.g.lightline = {
+        active = {
+          left = {
+            { "mode", "paste" },
+            { "readonly", "filename", "modified" },
+          },
+          right = {
+            { "lineinfo" },
+            { "percent" },
+            { "fileencoding", "filetype" },
+          },
+        },
+        component_function = {
+          filename = "LightlineFilename",
+        },
+      }
+      function LightlineFilenameInLua()
+        if vim.fn.expand("%:t") == "" then
+          return "[No Name]"
+        else
+          return vim.fn.getreg("%")
+        end
+      end
+      -- https://github.com/itchyny/lightline.vim/issues/657
+      vim.api.nvim_exec(
+        [[
+        function! g:LightlineFilename()
+            return v:lua.LightlineFilenameInLua()
+        endfunction
+        ]],
+        true
+      )
+    end,
   },
 
   {
@@ -44,6 +90,7 @@ return {
         { "<leader>g", group = "git" },
         { "<leader>l", group = "lsp" },
         { "<leader>n", group = "notifications" },
+        { "<leader>u", group = "ui" },
         { "<leader>x", group = "diagnostics/quickfix" },
       },
     },

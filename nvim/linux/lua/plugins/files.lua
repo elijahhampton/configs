@@ -19,6 +19,19 @@ return {
       filters = { dotfiles = false },
       git = { enable = true, ignore = false },
       actions = { open_file = { quit_on_open = false } },
+      on_attach = function(bufnr)
+        local api = require("nvim-tree.api")
+        -- Apply nvim-tree's DEFAULT mappings first (<CR>=open, o, a, d, r, <Tab>,
+        -- …). A custom on_attach replaces the defaults entirely, so without this
+        -- call <CR> falls back to plain Vim (move down) instead of opening a file.
+        api.config.mappings.default_on_attach(bufnr)
+        local function opts_fn(desc)
+          return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true }
+        end
+        vim.keymap.set("n", "<C-v>", api.node.open.vertical, opts_fn("Open: Vertical Split"))
+        vim.keymap.set("n", "<C-x>", api.node.open.horizontal, opts_fn("Open: Horizontal Split"))
+        vim.keymap.set("n", "<C-t>", api.node.open.tab, opts_fn("Open: New Tab"))
+      end,
     },
     config = function(_, opts)
       require("nvim-tree").setup(opts)

@@ -159,6 +159,17 @@ return {
           local bufnr = args.buf
           local client = vim.lsp.get_client_by_id(args.data.client_id)
 
+          -- Virtual buffers from diffview.nvim/fugitive.vim (git blob
+          -- content) are named like "diffview://..." or "fugitive://...",
+          -- not a real path. Sending that as a URI makes servers reject it
+          -- (e.g. gopls: "-32700 DocumentURI scheme is not 'file'"), so
+          -- detach immediately instead of treating it like a real file.
+          local bufname = vim.api.nvim_buf_get_name(bufnr)
+          if bufname:match("^%a+://") then
+            if client then vim.lsp.buf_detach_client(bufnr, client.id) end
+            return
+          end
+
           if client and client:supports_method("textDocument/inlayHint") then
             vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
           end
