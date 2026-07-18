@@ -4,7 +4,7 @@ vim.g.maplocalleader = " "
 local opt = vim.opt
 
 opt.number = true
-opt.relativenumber = true
+opt.relativenumber = false
 opt.cursorline = true
 opt.wrap = false
 opt.scrolloff = 8

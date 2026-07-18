@@ -17,6 +17,14 @@ map("n", "<leader>bd", "<cmd>bdelete<CR>", { desc = "Delete buffer" })
 -- defaults before nvim ever sees the keystroke.
 map({ "n", "i", "t" }, "<C-.>", "<Cmd>tabnext<CR>", { desc = "Next tab" })
 map({ "n", "i", "t" }, "<C-,>", "<Cmd>tabprevious<CR>", { desc = "Prev tab" })
+
+-- Normal/terminal only (not insert): <Tab>/<S-Tab> are already owned by
+-- nvim-cmp for completion in insert mode. <Cmd> keeps terminal-mode from
+-- being kicked to normal mode, and terminal-mode mappings intercept the key
+-- before it reaches the job (e.g. Claude Code), so this works even there.
+map({ "n", "t" }, "<Tab>", "<Cmd>tabnext<CR>", { desc = "Next tab" })
+map({ "n", "t" }, "<S-Tab>", "<Cmd>tabprevious<CR>", { desc = "Prev tab" })
+
 map("n", "<leader><Tab>", "<cmd>tabnew<CR>", { desc = "New tab" })
 
 map("v", "<", "<gv")
